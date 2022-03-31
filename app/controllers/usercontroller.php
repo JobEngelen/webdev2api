@@ -42,8 +42,8 @@ class UserController extends Controller
         try{
         $secret_key = "thismustbesecret";
 
-        $issuer = "https://webdev2api.herokuapp.com"; // this can be the domain/servername that issues the token
-        $audience = "https://webdev2api.herokuapp.com"; // this can be the domain/servername that checks the token
+        $issuer = "http://localhost"; // this can be the domain/servername that issues the token
+        $audience = "http://localhost"; // this can be the domain/servername that checks the token
 
         $issuedAt = time(); // issued at
         $notbefore = time(); //not valid before 
