@@ -40,13 +40,16 @@ class OrderController extends Controller
     public function create()
     {
         try {
-            $order = $this->createObjectFromPostedJson("Models\\order");
-            $this->service->insert($order);
+            $postedOrder = $this->createObjectFromPostedJson("Models\\Order");
+            $ordersV = array_count_values(explode(",,", htmlspecialchars($postedOrder->orderstring)));
+            $ordersU = array_unique(explode(",,", htmlspecialchars($postedOrder->orderstring)));
+            
+            $response = $this->service->insert($ordersV, $ordersU, htmlspecialchars($postedOrder->userid));
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
         }
 
-        $this->respond($order);
+        $this->respond($response);
     }
 
     public function update($id)

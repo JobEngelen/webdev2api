@@ -25,7 +25,7 @@ class ProductRepository extends Repository
             $stmt->execute();
 
             $products = array();
-            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {               
+            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
                 $products[] = $this->rowToProduct($row);
             }
 
@@ -53,7 +53,31 @@ class ProductRepository extends Repository
         }
     }
 
-    function rowToProduct($row) {
+    function getCart($cartItems)
+    {
+        try {
+            $queryInParam = "(";
+            foreach ($cartItems as $item) {
+                if ($queryInParam != "(") $queryInParam = $queryInParam . ", ";
+                $queryInParam = $queryInParam . "'" . $item . "'";
+            }
+            $queryInParam = $queryInParam . ")";
+            $query = "SELECT product.*, category.name as category_name FROM product INNER JOIN category ON product.category_id = category.id WHERE product.id IN " . $queryInParam;
+            $stmt = $this->connection->prepare($query);
+            $stmt->execute();
+
+            $products = array();
+            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+                $products[] = $this->rowToProduct($row);
+            }
+            return $products;
+        } catch (PDOException $e) {
+            echo $e;
+        }
+    }
+
+    function rowToProduct($row)
+    {
         $product = new Product();
         $product->id = $row['id'];
         $product->name = $row['name'];

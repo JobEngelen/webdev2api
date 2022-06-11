@@ -17,6 +17,7 @@ $router->setNamespace('Controllers');
 $router->get('/products', 'ProductController@getAll');
 $router->get('/homeproducts', 'ProductController@getAllHome'); // Homepage; no jwt needed
 $router->get('/products/(\d+)', 'ProductController@getOne');
+$router->get('/products/cart/(.*)', 'ProductController@getCart');
 $router->post('/products', 'ProductController@create');
 $router->put('/products/(\d+)', 'ProductController@update');
 $router->delete('/products/(\d+)', 'ProductController@delete');

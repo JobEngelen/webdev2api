@@ -21,7 +21,7 @@ class ProductController extends Controller
         $token = $this->checkForJwt();
         if (!$token)
             return;
-            
+
         $offset = NULL;
         $limit = NULL;
 
@@ -38,7 +38,7 @@ class ProductController extends Controller
     }
 
     public function getAllHome()
-    {       
+    {
         $offset = NULL;
         $limit = NULL;
 
@@ -63,8 +63,18 @@ class ProductController extends Controller
             $this->respondWithError(404, "Product not found");
             return;
         }
-
         $this->respond($product);
+    }
+
+    public function getCart($cartIds)
+    {
+        $products = $this->service->getCart(array_unique(explode(",,", htmlspecialchars($cartIds))));
+        if (!$products) {
+            $this->respondWithError(404, "Product(s) not found");
+            return;
+        }
+
+        $this->respond($products);
     }
 
     public function create()
@@ -72,7 +82,6 @@ class ProductController extends Controller
         try {
             $product = $this->createObjectFromPostedJson("Models\\Product");
             $product = $this->service->insert($product);
-
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
         }
@@ -85,7 +94,6 @@ class ProductController extends Controller
         try {
             $product = $this->createObjectFromPostedJson("Models\\Product");
             $product = $this->service->update($product);
-
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
         }

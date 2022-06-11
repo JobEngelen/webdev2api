@@ -31,17 +31,28 @@ class OrderRepository extends Repository
         }
     }
 
-    function insert($order)
+    function insert($ordersV, $ordersU, $userid)
     {
         try {
-            $stmt = $this->connection->prepare("INSERT INTO order (userid) VALUES (?)");
+            $stmt = $this->connection->prepare("INSERT INTO `order` (userid) VALUES (:id)");
+            $stmt->bindParam(':id', $userid, PDO::PARAM_INT);
+            $stmt->execute();
 
-            $stmt->execute([$order->user->name]);
+            $orderId = $this->connection->lastInsertId();
 
-            $order->id = $this->connection->lastInsertId();
+            $stmt = $this->connection->prepare("INSERT INTO order_product (order_id, product_id, quantity) VALUES (:orderId, :productId, :quantity)");
+            foreach ($ordersU as $order) {
+                $stmt->bindParam(':orderId', $orderId, PDO::PARAM_INT);
+                $stmt->bindParam(':productId', $order, PDO::PARAM_INT);
+                $stmt->bindParam(':quantity', $ordersV[$order], PDO::PARAM_INT);
+                $stmt->execute();
+            }
 
             return $order;
         } catch (PDOException $e) {
+            var_dump($ordersV);
+            var_dump($ordersU);
+            var_dump($userid);
             echo $e;
         }
     }
@@ -53,7 +64,6 @@ class OrderRepository extends Repository
             $stmt = $this->connection->prepare("UPDATE order SET delivered = 1 WHERE id = ?");
 
             $stmt->execute([$id]);
-
         } catch (PDOException $e) {
             echo $e;
         }

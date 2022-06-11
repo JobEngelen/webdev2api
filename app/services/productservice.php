@@ -20,6 +20,10 @@ class ProductService {
         return $this->repository->getOne($id);
     }
 
+    public function getCart($cart) {
+        return $this->repository->getCart($cart);
+    }
+
     public function insert($item) {       
         return $this->repository->insert($item);        
     }
