@@ -41,10 +41,9 @@ class OrderController extends Controller
     {
         try {
             $postedOrder = $this->createObjectFromPostedJson("Models\\Order");
-            $ordersV = array_count_values(explode(",,", htmlspecialchars($postedOrder->orderstring)));
-            $ordersU = array_unique(explode(",,", htmlspecialchars($postedOrder->orderstring)));
+            $orders = $postedOrder->orderstring;
             
-            $response = $this->service->insert($ordersV, $ordersU, htmlspecialchars($postedOrder->userid));
+            $response = $this->service->insert($orders, htmlspecialchars($postedOrder->userid));
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
         }

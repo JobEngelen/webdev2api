@@ -31,7 +31,7 @@ class OrderRepository extends Repository
         }
     }
 
-    function insert($ordersV, $ordersU, $userid)
+    function insert($orders, $userid)
     {
         try {
             $stmt = $this->connection->prepare("INSERT INTO `order` (userid) VALUES (:id)");
@@ -41,18 +41,16 @@ class OrderRepository extends Repository
             $orderId = $this->connection->lastInsertId();
 
             $stmt = $this->connection->prepare("INSERT INTO order_product (order_id, product_id, quantity) VALUES (:orderId, :productId, :quantity)");
-            foreach ($ordersU as $order) {
+            foreach ($orders as $order) {
+
                 $stmt->bindParam(':orderId', $orderId, PDO::PARAM_INT);
-                $stmt->bindParam(':productId', $order, PDO::PARAM_INT);
-                $stmt->bindParam(':quantity', $ordersV[$order], PDO::PARAM_INT);
+                $stmt->bindParam(':productId', $order->id, PDO::PARAM_INT);
+                $stmt->bindParam(':quantity', $order->quantity, PDO::PARAM_INT);
                 $stmt->execute();
             }
 
-            return $order;
+            return "Bestelling id(" . $orderId . ") geplaatst!";
         } catch (PDOException $e) {
-            var_dump($ordersV);
-            var_dump($ordersU);
-            var_dump($userid);
             echo $e;
         }
     }

@@ -3,7 +3,7 @@ namespace Models;
 
 class Order {
 
-    public string $orderstring;
+    public Product $products;
     public int $userid;
 
 }

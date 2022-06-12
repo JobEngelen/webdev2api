@@ -16,8 +16,8 @@ class OrderService {
         return $this->repository->getAll($offset, $limit);
     }
 
-    public function insert($ordersV, $ordersU, $userid) {       
-        return $this->repository->insert($ordersV, $ordersU, $userid);        
+    public function insert($orders, $userid) {       
+        return $this->repository->insert($orders, $userid);        
     }
 
     public function update($item, $id) {       
