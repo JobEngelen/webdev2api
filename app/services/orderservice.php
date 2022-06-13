@@ -20,8 +20,8 @@ class OrderService {
         return $this->repository->insert($orders, $userid);        
     }
 
-    public function update($item, $id) {       
-        return $this->repository->update($item, $id);        
+    public function update($id, $status) {       
+        return $this->repository->update($id, $status);        
     }
 
     public function delete($item) {       

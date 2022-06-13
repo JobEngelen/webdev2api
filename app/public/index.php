@@ -32,8 +32,8 @@ $router->delete('/categories/(\d+)', 'CategoryController@delete');
 // routes for the order endpoint
 $router->get('/order', 'OrderController@getAll');
 $router->post('/order', 'OrderController@create');
-$router->put('/order/(\d+)', 'OrderController@update');
-$router->delete('/order/(\dt+)', 'OrderController@delete');
+$router->put('/order/(\d+)/(\d+)', 'OrderController@update');
+$router->delete('/order/(\d+)', 'OrderController@delete');
 
 // routes for the users endpoint
 $router->post('/users/login', 'UserController@login');

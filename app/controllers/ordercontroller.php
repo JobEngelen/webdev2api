@@ -41,16 +41,13 @@ class OrderController extends Controller
         $this->respond($response);
     }
 
-    public function update($id)
+    public function update($id, $status)
     {
         try {
-            $order = $this->createObjectFromPostedJson("Models\\order");
-            $this->service->update($order, $id);
+            $this->service->update($id, $status);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
         }
-
-        $this->respond($order);
     }
 
     public function delete($id)

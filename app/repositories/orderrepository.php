@@ -11,7 +11,7 @@ use Models\Product;
 
 class OrderRepository extends Repository
 {
-    function getAll($offset = NULL, $limit = NULL)
+    function getAll()
     {
         try {
             $query = "SELECT o.*, u.id AS uid, u.username 
@@ -98,12 +98,13 @@ class OrderRepository extends Repository
     }
 
 
-    function update($id)
+    function update($id, $status)
     {
         try {
-            $stmt = $this->connection->prepare("UPDATE order SET delivered = 1 WHERE id = ?");
-
-            $stmt->execute([$id]);
+            $stmt = $this->connection->prepare("UPDATE `order` SET delivered = :status WHERE id = :id");
+            $stmt->bindParam(':status', $status);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
         } catch (PDOException $e) {
             echo $e;
         }
@@ -112,7 +113,11 @@ class OrderRepository extends Repository
     function delete($id)
     {
         try {
-            $stmt = $this->connection->prepare("DELETE FROM order WHERE id = :id");
+            $stmt = $this->connection->prepare("DELETE FROM `order` WHERE id = :id");
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            $stmt = $this->connection->prepare("DELETE FROM `order_product` WHERE order_id = :id");
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             return;
