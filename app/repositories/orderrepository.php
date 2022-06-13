@@ -5,30 +5,72 @@ namespace Repositories;
 use PDO;
 use PDOException;
 use Repositories\Repository;
+use Models\OrderProduct;
+use Models\User;
+use Models\Product;
 
 class OrderRepository extends Repository
 {
     function getAll($offset = NULL, $limit = NULL)
     {
         try {
-            $query = "SELECT * FROM order";
-            if (isset($limit) && isset($offset)) {
-                $query .= " LIMIT :limit OFFSET :offset ";
-            }
+            $query = "SELECT o.*, u.id AS uid, u.username 
+                    FROM `order` AS o 
+                    INNER JOIN user AS u ON u.id = o.userid
+                    ORDER BY DELIVERED ASC, ordertime ASC";
             $stmt = $this->connection->prepare($query);
-            if (isset($limit) && isset($offset)) {
-                $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-                $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-            }
             $stmt->execute();
 
-            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Models\Order');
-            $articles = $stmt->fetchAll();
+            $orders = array();
+            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+                $orders[] = $this->rowToOrder($row);
+            }
 
-            return $articles;
+            $query = "SELECT op.*, p.*
+                    FROM `order_product` AS op
+                    INNER JOIN product AS p ON op.product_id = p.id;";
+            $stmt = $this->connection->prepare($query);
+            $stmt->execute();
+
+
+            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+                foreach ($orders as $key => $order) {
+                    $orders[$key] = $this->rowToOrderProduct($row, $order);
+                }
+            }
+
+            return $orders;
         } catch (PDOException $e) {
             echo $e;
         }
+    }
+
+    function rowToOrder($row)
+    {
+        $order = new OrderProduct();
+        $order->id = $row['id'];
+        $order->orderTime = $row["ordertime"];
+        $order->user = new User();
+        $order->user->id = $row['uid'];
+        $order->user->username = $row['username'];
+        $order->products = array();
+        $order->delivered = $row['delivered'];
+        return $order;
+    }
+
+    function rowToOrderProduct($row, $order)
+    {
+        if ($row['order_id'] == $order->id) {
+            $product = new Product();
+            $product->id = $row['product_id'];
+            $product->name = $row['name'];
+            $product->price = $row['price'];
+            $product->image = $row['image'];
+            $product->quantity = $row['quantity'];
+
+            $order->products[count($order->products)] = $product;
+        }
+        return $order;
     }
 
     function insert($orders, $userid)

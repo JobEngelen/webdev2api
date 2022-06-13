@@ -22,17 +22,7 @@ class OrderController extends Controller
         if (!$token)
             return;
 
-        $offset = NULL;
-        $limit = NULL;
-
-        if (isset($_GET["offset"]) && is_numeric($_GET["offset"])) {
-            $offset = $_GET["offset"];
-        }
-        if (isset($_GET["limit"]) && is_numeric($_GET["limit"])) {
-            $limit = $_GET["limit"];
-        }
-
-        $orders = $this->service->getAll($offset, $limit);
+        $orders = $this->service->getAll();
 
         $this->respond($orders);
     }

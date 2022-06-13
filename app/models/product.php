@@ -10,6 +10,7 @@ class Product {
     public string $image;
     public string $category_id;
     public Category $category;
+    public int $quantity;
  
 }
 

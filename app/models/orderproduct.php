@@ -3,10 +3,13 @@ namespace Models;
 
 class OrderProduct {
 
-    public Order $order;
-    public Product $product;
-    public int $quantity;
-  
+    public int $id;
+    public string $orderTime;
+    public User $user;
+    //public Product $product;
+    public $products = array();
+    public bool $delivered;
+
 }
 
 ?>
